@@ -14,13 +14,16 @@ import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 
+import Firebase from '../lib/firebase';
+
 export default class FacebookScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
 
   onButtonPress() {
-      WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
+      let firebase = Firebase.getInstance();
+      firebase.loginFacebook();
   }
 
   render() {

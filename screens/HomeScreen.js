@@ -8,93 +8,95 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
   Button
 } from 'react-native';
 import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 
-import Firebase from '../lib/firebase'
+import Firebase from '../lib/firebase';
+
+import t from 'tcomb-form-native'; // 0.6.11
+
+const Form = t.form.Form;
+
+const User = t.struct({
+    username: t.maybe(t.String),
+    email: t.String,
+    password: t.String,
+    terms: t.Boolean,
+});
+
+const options = {
+  fields: {
+    email: {
+      error: 'Without an email address how are you going to reset your password when you forget it?'
+    },
+    password: {
+      error: 'Choose something you use on a dozen other sites or something you won\'t remember',
+      secureTextEntry: true,
+      password: true
+    },
+    terms: {
+      label: "Agree to terms",
+    },
+  },
+};
+
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
 
-  onButtonPress() {
-      let firebase =  new Firebase();
-      firebase.getInfo();
+  handleSubmit = () => {
+    const value = this.formRef.getValue();
+    let firebase = Firebase.getInstance();
+    let that = this;
+    if (value) {
+        firebase.createUser(value)
+           .then(function (res) {
+               console.log(res);
+               that.alertMessage('Success',res.toString());
+            })
+           .catch(function (error) {
+               console.log(error);
+               that.alertMessage('Error',error.toString());
+           });
+    }
   }
+
+  alertMessage(title, msg) {
+     Alert.alert(
+        title,
+        msg,
+        [
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ],
+        { cancelable: false }
+    );
+  }
+
+
 
   render() {
     return (
-        <View style={styles.loginContainer}>
+        <View style={styles.container}>
 
-            <View style={styles.formContainer}>
-            <TextInput style = {styles.input}
-                     autoCapitalize="none"
-                     onSubmitEditing={() => this.passwordInput.focus()}
-                     autoCorrect={false}
-                     keyboardType='email-address'
-                     returnKeyType="next"
-                     placeholder='Name'
-                     placeholderTextColor='rgba(0, 16, 0, 1)'/>
+            <Form ref={c => this.formRef = c} type={User} options={options} />
+            <Button title="Sign Up" onPress={this.handleSubmit} />
 
-
-             <TextInput style = {styles.input}
-                      autoCapitalize="none"
-                      onSubmitEditing={() => this.passwordInput.focus()}
-                      autoCorrect={false}
-                      keyboardType='email-address'
-                      returnKeyType="next"
-                      placeholder='Email or Mobile Num'
-                      placeholderTextColor='rgba(0, 16, 0, 1)'/>
-
-            <TextInput style = {styles.input}
-                    returnKeyType="go"
-                    ref={(input)=> this.passwordInput = input}
-                    placeholder='Password'
-                    placeholderTextColor='rgba(0, 16, 0, 1)'
-                    secureTextEntry/>
-
-            <TouchableOpacity style={styles.buttonContainer}
-                           onPress={this.onButtonPress}>
-                   <Text style={styles.buttonText}>Register</Text>
-            </TouchableOpacity>
-            </View>
        </View>
     );
   }
 }
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#ffff',
-    },
-    loginContainer:{
-        alignItems: 'center',
-        flexGrow: 1,
-        justifyContent: 'center'
-    },
-    logo: {
-        position: 'absolute',
-        width: 300,
-        height: 100
-    },
-    input:{
-        height: 40,
-        backgroundColor: 'rgba(1,1,1,0)',
-        marginBottom: 10,
-        padding: 10,
-        color: '#fff'
-    },
-    buttonContainer:{
-        backgroundColor: '#2980b6',
-        paddingVertical: 15
-    },
-    buttonText:{
-        color: '#fff',
-        textAlign: 'center',
-        fontWeight: '700'
-    }
+        justifyContent: 'center',
+        marginTop: 50,
+        padding: 20,
+        backgroundColor: '#ffffff',
+        flex:1
+  },
 });
