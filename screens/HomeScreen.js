@@ -28,6 +28,11 @@ const User = t.struct({
     terms: t.Boolean,
 });
 
+const Login = t.struct({
+    mail: t.String,
+    pwd: t.String,
+});
+
 const options = {
   fields: {
     email: {
@@ -44,6 +49,19 @@ const options = {
   },
 };
 
+const options_login = {
+  fields: {
+    mail: {
+      error: 'Il faut un mail'
+    },
+    pwd: {
+      error: 'Un mot de passe est necessaire',
+      secureTextEntry: true,
+      password: true
+    },
+  },
+};
+
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -54,17 +72,36 @@ export default class HomeScreen extends React.Component {
     const value = this.formRef.getValue();
     let firebase = Firebase.getInstance();
     let that = this;
-    if (value) {
-        firebase.createUser(value)
+    if (value.email && value.password && value.username) {
+        console.log(value.email, value.password, value.username);
+        firebase.createUser(value.email, value.password, value.username)
            .then(function (res) {
-               console.log(res);
+               //console.log(res);
                that.alertMessage('Success',res.toString());
             })
            .catch(function (error) {
-               console.log(error);
+               //console.log(error);
                that.alertMessage('Error',error.toString());
            });
     }
+  }
+
+  loginSubmit = () => {
+    const value = this.formRef2.getValue();
+    let firebase = Firebase.getInstance();
+    let that = this;
+    if (value.mail && value.pwd) {
+        console.log(value.mail, value.pwd);
+        firebase.loginUser(value.mail, value.pwd)
+           .then(function (res) {
+               //console.log(res);
+               that.alertMessage('Success',res.toString());
+            })
+           .catch(function (error) {
+               //console.log(error);
+               that.alertMessage('Error',error.toString());
+           });
+     }
   }
 
   alertMessage(title, msg) {
@@ -78,25 +115,26 @@ export default class HomeScreen extends React.Component {
     );
   }
 
-
-
   render() {
     return (
-        <View style={styles.container}>
 
-            <Form ref={c => this.formRef = c} type={User} options={options} />
-            <Button title="Sign Up" onPress={this.handleSubmit} />
+        <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
 
-       </View>
+           <View style={{ flex: 1, justifyContent: 'center', backgroundColor: '#ffffff'}}>
+               <View style={{marginTop: 50, flex:3}}>
+                   <Form ref={c => this.formRef = c} type={User} options={options} />
+                   <Button title="Sign Up" onPress={this.handleSubmit} />
+              </View>
+              <View style={{flex:1, height: 50, backgroundColor: 'skyblue'}}>
+              </View>
+              <View style={{flex:2}}>
+                  <Form ref={c => this.formRef2 = c} type={Login} options={options_login} />
+                  <Button title="Sign In"  color="orange" onPress={this.loginSubmit} />
+             </View>
+          </View>
+
+        </ScrollView>
+
     );
   }
 }
-const styles = StyleSheet.create({
-    container: {
-        justifyContent: 'center',
-        marginTop: 50,
-        padding: 20,
-        backgroundColor: '#ffffff',
-        flex:1
-  },
-});
