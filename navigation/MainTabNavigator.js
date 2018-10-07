@@ -4,57 +4,74 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import GoogleScreen from '../screens/GoogleScreen';
+import FacebookScreen from '../screens/FacebookScreen';
+import TwitterScreen from '../screens/TwitterScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
 });
 
 HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+  tabBarLabel: 'Normal',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
       name={
         Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
+          ? `ios-log-in`
+          : 'md-log-in'
       }
     />
   ),
 };
 
-const LinksStack = createStackNavigator({
-  Links: LinksScreen,
+const GoogleStack = createStackNavigator({
+  Links: GoogleScreen,
 });
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+GoogleStack.navigationOptions = {
+  tabBarLabel: 'Google',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? `ios-link${focused ? '' : '-outline'}` : 'md-link'}
+      name='logo-google'
     />
   ),
 };
 
-const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen,
+const FacebookStack = createStackNavigator({
+  Facebook: FacebookScreen,
 });
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+FacebookStack.navigationOptions = {
+  tabBarLabel: 'Facebook',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options'}
+      name='logo-facebook'
+    />
+  ),
+};
+
+
+const TwitterStack = createStackNavigator({
+  Twitter: TwitterScreen,
+});
+
+TwitterStack.navigationOptions = {
+  tabBarLabel: 'Twitter',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name='logo-twitter'
     />
   ),
 };
 
 export default createBottomTabNavigator({
   HomeStack,
-  LinksStack,
-  SettingsStack,
+  GoogleStack,
+  FacebookStack,
+  TwitterStack
 });
