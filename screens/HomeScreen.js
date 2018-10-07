@@ -74,16 +74,22 @@ export default class HomeScreen extends React.Component {
     let that = this;
     if (value.email && value.password && value.username) {
         console.log(value.email, value.password, value.username);
-        firebase.createUser(value.email, value.password, value.username)
+        firebase.createUser(value.email, value.password)
            .then(function (res) {
                //console.log(res);
                that.alertMessage('Success',res.toString());
+               this.saveUsername(res.user.uid, value.username);
             })
            .catch(function (error) {
                //console.log(error);
                that.alertMessage('Error',error.toString());
            });
     }
+  }
+
+  saveUsername(uid, username){
+      let firebase = Firebase.getInstance();
+      firebase.storeMoreInformation(uid, username);
   }
 
   loginSubmit = () => {
