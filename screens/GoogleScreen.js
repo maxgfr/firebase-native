@@ -1,62 +1,76 @@
 import React from 'react';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Button
-} from 'react-native';
-import { WebBrowser } from 'expo';
-
-import { MonoText } from '../components/StyledText';
-
-import Firebase from '../lib/firebase';
+import { StyleSheet, Text, View, Image, Button } from "react-native"
+import Expo from "expo"
+import Firebase from '../lib/firebase'
 
 export default class GoogleScreen extends React.Component {
-  static navigationOptions = {
-    header: null,
-  };
 
-  onButtonPress() {
-      WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
-  }
+    constructor(props) {
+     super(props)
+     this.state = {
+       signedIn: false,
+       name: "",
+       photoUrl: ""
+     }
+   }
 
-  render() {
-    return (
-        <View style={styles.loginContainer}>
-
-            <View style={styles.formContainer}>
-            <TouchableOpacity style={styles.buttonContainer}
-                           onPress={this.onButtonPress}>
-                   <Text style={styles.buttonText}>Log in with Google</Text>
-            </TouchableOpacity>
-            </View>
+   signIn = async () => {
+        let firebase = Firebase.getInstance();
+        await firebase.loginWithGoogle(function(result) {
+          this.setState({
+                signedIn: true,
+                name: result.user.name,
+                photoUrl: result.user.photoUrl
+           });
+        }.bind(this));
+   }
+   render() {
+     return (
+       <View style={styles.container}>
+         {this.state.signedIn ? (
+           <LoggedInPage name={this.state.name} photoUrl={this.state.photoUrl} />
+         ) : (
+           <LoginPage signIn={this.signIn} />
+         )}
        </View>
-    );
-  }
-}
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#ffff',
-    },
-    loginContainer:{
-        alignItems: 'center',
-        flexGrow: 1,
-        justifyContent: 'center'
-    },
-    buttonContainer:{
-        backgroundColor: '#2980b6',
-        paddingVertical: 25,
-        paddingHorizontal: 25
-    },
-    buttonText:{
-        color: '#fff',
-        textAlign: 'center',
-        fontWeight: '700'
-    }
+     )
+   }
+ }
+
+ const LoginPage = props => {
+   return (
+     <View>
+       <Text style={styles.header}>Sign In With Google</Text>
+       <Button title="Sign in with Google" onPress={() => props.signIn()} />
+     </View>
+   )
+ }
+
+ const LoggedInPage = props => {
+   return (
+     <View style={styles.container}>
+       <Text style={styles.header}>Welcome:{props.name}</Text>
+       <Image style={styles.image} source={{ uri: props.photoUrl }} />
+     </View>
+   )
+ }
+
+ const styles = StyleSheet.create({
+   container: {
+     flex: 1,
+     backgroundColor: "#fff",
+     alignItems: "center",
+     justifyContent: "center"
+   },
+   header: {
+     fontSize: 25
+   },
+   image: {
+     marginTop: 15,
+     width: 150,
+     height: 150,
+     borderColor: "rgba(0,0,0,0.2)",
+     borderWidth: 3,
+     borderRadius: 150
+   }
 });

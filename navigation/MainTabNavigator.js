@@ -6,7 +6,6 @@ import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import GoogleScreen from '../screens/GoogleScreen';
 import FacebookScreen from '../screens/FacebookScreen';
-import TwitterScreen from '../screens/TwitterScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -55,23 +54,8 @@ FacebookStack.navigationOptions = {
 };
 
 
-const TwitterStack = createStackNavigator({
-  Twitter: TwitterScreen,
-});
-
-TwitterStack.navigationOptions = {
-  tabBarLabel: 'Twitter',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name='logo-twitter'
-    />
-  ),
-};
-
 export default createBottomTabNavigator({
   HomeStack,
   GoogleStack,
-  FacebookStack,
-  TwitterStack
+  FacebookStack
 });

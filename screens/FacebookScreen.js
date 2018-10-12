@@ -1,63 +1,74 @@
 import React from 'react';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Button
-} from 'react-native';
-import { WebBrowser } from 'expo';
-
-import { MonoText } from '../components/StyledText';
-
-import Firebase from '../lib/firebase';
+import { StyleSheet, Text, View, Image, Button } from "react-native"
+import Expo from "expo"
+import Firebase from '../lib/firebase'
 
 export default class FacebookScreen extends React.Component {
-  static navigationOptions = {
-    header: null,
-  };
 
-  onButtonPress() {
-      let firebase = Firebase.getInstance();
-      firebase.loginFacebook();
-  }
+    constructor(props) {
+     super(props)
+     this.state = {
+       signedIn: false,
+       token: "",
+     }
+   }
 
-  render() {
-    return (
-        <View style={styles.loginContainer}>
-
-            <View style={styles.formContainer}>
-            <TouchableOpacity style={styles.buttonContainer}
-                           onPress={this.onButtonPress}>
-                   <Text style={styles.buttonText}>Log in with Facebook</Text>
-            </TouchableOpacity>
-            </View>
+   signIn = async () => {
+        let firebase = Firebase.getInstance();
+        await firebase.loginWithFacebook(function(result) {
+            console.log(result);
+          this.setState({
+                signedIn: true,
+                token: result.token,
+           });
+        }.bind(this));
+   }
+   render() {
+     return (
+       <View style={styles.container}>
+         {this.state.signedIn ? (
+           <LoggedInPage token={this.state.token}/>
+         ) : (
+           <LoginPage signIn={this.signIn} />
+         )}
        </View>
-    );
-  }
-}
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#ffff',
-    },
-    loginContainer:{
-        alignItems: 'center',
-        flexGrow: 1,
-        justifyContent: 'center'
-    },
-    buttonContainer:{
-        backgroundColor: '#2980b6',
-        paddingVertical: 25,
-        paddingHorizontal: 25
-    },
-    buttonText:{
-        color: '#fff',
-        textAlign: 'center',
-        fontWeight: '700'
-    }
+     )
+   }
+ }
+
+ const LoginPage = props => {
+   return (
+     <View>
+       <Text style={styles.header}>Sign In With Facebook</Text>
+       <Button title="Sign in with Facebook" onPress={() => props.signIn()} />
+     </View>
+   )
+ }
+
+ const LoggedInPage = props => {
+   return (
+     <View style={styles.container}>
+       <Text style={styles.header}>Token :{props.token}</Text>
+     </View>
+   )
+ }
+
+ const styles = StyleSheet.create({
+   container: {
+     flex: 1,
+     backgroundColor: "#fff",
+     alignItems: "center",
+     justifyContent: "center"
+   },
+   header: {
+     fontSize: 25
+   },
+   image: {
+     marginTop: 15,
+     width: 150,
+     height: 150,
+     borderColor: "rgba(0,0,0,0.2)",
+     borderWidth: 3,
+     borderRadius: 150
+   }
 });
