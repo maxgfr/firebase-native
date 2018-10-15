@@ -19,9 +19,9 @@ Application which lets user to
 ## Application :
 
 <div align="center">
-  <img src="https://github.com/maxgfr/firebase-native/blob/master/.github/google.png" height="540" width="280"/>
-  <img src="https://github.com/maxgfr/firebase-native/blob/master/.github/firebase.png" height="540" width="280"/>
-  <img src="https://github.com/maxgfr/firebase-native/blob/master/.github/facebook.png" height="540" width="280"/>
+    <img src="https://github.com/maxgfr/firebase-native/blob/master/.github/firebase.png" height="540" width="280"/>
+    <img src="https://github.com/maxgfr/firebase-native/blob/master/.github/google.png" height="540" width="280"/>
+    <img src="https://github.com/maxgfr/firebase-native/blob/master/.github/facebook.png" height="540" width="280"/>
 </div>
 
 ## Issues :
