@@ -25,6 +25,6 @@
   },
   "devDependencies": {
     "babel-plugin-inline-dotenv": "^1.1.2",
-    "jest-expo": "30.0.0"
+    "jest-expo": "49.0.0"
   }
 }
